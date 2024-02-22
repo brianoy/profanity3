@@ -3,7 +3,7 @@
 Profanity 可以用來生成所有的EVM榮耀(虛榮)地址
 為什麼需要生成這些地址? 請google「漢明權重」。簡單的來說就是，在以太坊內，公鑰地址內越多成雙成對的「0」，就月可以大幅降低所需的gas fee。同時它也可以生成像是0x8888...、0x6666...、0xdead...等開頭的虛榮地址，在16進位的字海中發現這個酷酷ㄉ地址，還可以順便跟幣友炫耀(。
 
-Profanity原本是Johan Gustafsson的專案，後來被1inch揭露其隨機生成碼可以被逆向工程導致私鑰外洩，該專案已被封存
+Profanity原本是2017年由Johan Gustafsson推出的專案，後來在2022年被1inch揭露其隨機生成碼可以被逆向工程導致私鑰外洩，而該專案也被封存
 Profanity2是後來1inch修改Profanity的種子碼生成方式，現在可正常使用
 Profanity3是後來Rodrigo Madera的加強版，多了可以逆向生成原本Profanity生成公鑰回推私鑰的功能
 以上都是linux friendly，windows not friendly的版本
