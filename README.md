@@ -1,43 +1,49 @@
-# profanity3 for windows
+# profanity3 for windows 中文說明 & 踩地雷排解
 
-Profanity is the fastest vanity generator for ethereum addresses and contract addresses.
+Profanity 可以用來生成所有的EVM榮耀(虛榮)地址
+為什麼需要生成這些地址? 請google「漢明權重」。簡單的來說就是，在以太坊內，公鑰地址內越多成雙成對的「0」，就月可以大幅降低所需的gas fee。同時它也可以生成像是0x8888...、0x6666...、0xdead...等開頭的虛榮地址，在16進位的字海中發現這個酷酷ㄉ地址，還可以順便跟幣友炫耀(。
 
-"profanity3 is a fork of "profanity2" from 1inch Network <info@1inch.io>, which fixes the security problems of the original "profanity" from Johan Gustafsson <profanity@johgu.se>.
+Profanity原本是Johan Gustafsson的專案，後來被1inch揭露其隨機生成碼可以被逆向工程導致私鑰外洩，該專案已被封存
+Profanity2是後來1inch修改Profanity的種子碼生成方式，現在可正常使用
+Profanity3是後來Rodrigo Madera的加強版，多了可以逆向生成原本Profanity生成公鑰回推私鑰的功能
+以上都是linux friendly，windows not friendly的版本
+profanity3WINx64是來自xdeltax的加強版，增加了對於windows環境的支援
 
-"profanity3" from Rodrigo Madera <madera@acm.org>, is the same as "profanity2" with just one special feature: it can reverse engineer "profanity1" keys.
 
-"profanity3WINx64" is a fork of "profanity3" with some adjustments to compile for windows.
+# 使用需知
 
-![Screenshot](/img/WS2022DC12.png?raw=true "Windows Server 2022 Datacenter")
+DYOR (Do Your Own Research.)
+在了解這是什麼之前，請不要使用它。
 
-# Important to know
+該專案的先前版本（也就是Profanity）存在隨機源不佳的問題，導致。該問題使攻擊者可以在給定公鑰的情況下恢復私鑰，也導致了造市商Wintermute被盜了約50億台幣：
+https://blog.1inch.io/a-vulnerability-disclosed-in-profanity-an-ethereum-vanity-address-tool/
+https://news.cnyes.com/news/id/4955767
 
-A previous version of this project (hereby called "profanity1" for context) has a known critical issue due to a bad source of randomness. The issue enables attackers to recover the private key given a public key: https://blog.1inch.io/a-vulnerability-disclosed-in-profanity-an-ethereum-vanity-address-tool-68ed7455fc8c
+1inch 團隊創建了一個後續專案稱為 "profanity2"，它是從原始的 "profanity1" 專案分叉出來的，並進行了修改以確保設計上的安全性。他們聲稱"這意味著該專案的源代碼不需要任何審核，但仍然保證安全使用。" 這有點大膽的陳述（如果你問我），儘管這基本上是正確的。
 
-The good guys at 1inch created a follow-up project called "profanity2" which was forked from the original "profanity1" project and modified to guarantee **safety by design**. They claim that "this means that the source code of this project does not require any audits, but still guarantee safe usage." Kind of a bold statement (if you ask me) although it's pretty much true.
+"profanity2" 專案不再生成金鑰（與 "profanity1" 相反）。相反，它調整用戶提供的公鑰，直到發現所需的虛榮地址。用戶使用 -z 參數標誌以128 字符十六進制字符串的形式提供種子公鑰。然後，將結果的私鑰添加到種子私鑰中，以獲得具有所需虛榮地址的最終私鑰（請記住：私鑰只是256位數）。甚至可以將 "profanity2" 的運行外包給完全不可靠的人-它仍然是設計上安全的。
 
-The "profanity2" project is not generating keys anymore (as opposed to "profanity1"). Instead, it adjusts a user-provided public key until a desired vanity address is discovered. Users provide a seed public key in the form of a 128-symbol hex string with the `-z` parameter flag. The resulting private key should then be added to the seed private key to achieve a final private key with the desired vanity address (remember: private keys are just 256-bit numbers). Running "profanity2" can even be outsourced to someone completely unreliable - it is still safe by design.
+# 使用教學
+## 1.生成一串公鑰A 以及 私鑰A
 
-## Getting public key for mandatory `-z` parameter
-
-Generate private key and public key via openssl in MSYS2-terminal (remove prefix "04" from public key):
+通過 openssl 在 MSYS2 終端生成私鑰和公鑰（從公鑰中刪除前綴 "04"）：
 ```bash
 $ openssl ecparam -genkey -name secp256k1 -text -noout -outform DER | xxd -p -c 1000 | sed 's/41534e31204f49443a20736563703235366b310a30740201010420/Private Key: /' | sed 's/a00706052b8104000aa144034200/\'$'\nPublic Key: /'
 ```
 
-## Merging private keys (never use online calculators!)
+## 合併私鑰(絕對只能在本地端執行)
 
 ```PRIVATE_KEY_A = private key from "Generate private key"```
 ```PRIVATE_KEY_B = private key from "profanity"-search result```
 
-### use Terminal
+### MSYS2 終端
 
 Use private keys as 64-symbol hexadecimal string WITHOUT `0x` prefix:
 ```bash
 (echo 'ibase=16;obase=10' && (echo '(PRIVATE_KEY_A + PRIVATE_KEY_B) % FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F' | tr '[:lower:]' '[:upper:]')) | bc
 ```
 
-### use Python
+### Python bash
 
 Use private keys as 64-symbol hexadecimal string WITH `0x` prefix:
 ```bash
@@ -52,10 +58,10 @@ $ python3
 >>> 0BC7506AF1B2484069D6ED3EA093C5123D83E2444D9C0A1CF277BF226FB49AD0 (Pad with 1 zero as length only 63)
 ```
 
-Note that if **less than 64-symbol** is generated, simply **add leading zeroes** to the private key. This occurs due to the summation of `PRIVATE_KEY_A` & `PRIVATE_KEY_B` with leading 0s not being displayed in final hex generated. Example above has 1 overlapping leading 0 thus we add an additional zero.
+請注意，如果生成的少於64 字符，只需向私鑰添加前導零。這是由於PRIVATE_KEY_A和PRIVATE_KEY_B的求和未在最終生成的十六進制中顯示前導0。例如，上面的示例有1個重疊的前導0，因此我們添加了一個額外的零。
 
 
-# Usage
+# profanity3 的用法
 ```
 usage: ./profanity3 [OPTIONS]
 
@@ -138,7 +144,7 @@ usage: ./profanity3 [OPTIONS]
       corners to improve overall performance.
 ```
 
-## Example
+## 範例
 ```bash
 STEP 1: create a random private and public key-pair
 $ openssl ecparam -genkey -name secp256k1 -text -noout -outform DER | xxd -p -c 1000 | sed 's/41534e31204f49443a20736563703235366b310a30740201010420/Private Key: /' | sed 's/a00706052b8104000aa144034200/\'$'\nPublic Key: /'
@@ -264,3 +270,6 @@ GPU RTX 3070 -> Rate = 440 MH/s -> 50% probability:
 15 chars -> 56 years
 16 chars -> 921 years
 ```
+
+
+
