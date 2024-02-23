@@ -410,7 +410,7 @@ compilation terminated.
 ```
 > 請確認開啟的視窗是否為MSYS2 MINGW64，而非MSYS2 MSYS
 
-### 4.編譯失敗
+### 4.多GPU問題-Segmentation fault
 遇到：
 ```bash
 Mode: matching
