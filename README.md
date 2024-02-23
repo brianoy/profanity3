@@ -1,5 +1,5 @@
 # profanity3 for windows 中文說明 & 踩地雷排解
-> 以下翻譯內容來自作者xdeltax的profanity3WINx64專案的README.md，有加入本人的一些參考見解、安裝說明以及踩雷debug之處，非全文照翻
+###### 以下翻譯內容來自作者xdeltax的profanity3WINx64專案的README.md，有加入本人的一些不專業見解、安裝說明以及踩雷debug之處，非全文照翻
 
 ## 簡介
 
@@ -22,13 +22,14 @@ Profanity 可以用來生成EVM虛榮地址/虛名地址(我比較想把它取�
 
 - 知道什麼是以太坊地址
 - 知道什麼是公鑰什麼是私鑰
+- 知道簡單的機率問題
 - 知道公鑰和私鑰是如何產生的
 - 略懂英文 (至少幣圈術語要看的懂吧)
 
 
 ## 使用需知
 
-在了解這是什麼之前，請不要使用它。
+###### 在了解這是什麼之前，請不要使用它。
 
 > DYOR (Do Your Own Research.)
 
@@ -48,84 +49,145 @@ Profanity 可以用來生成EVM虛榮地址/虛名地址(我比較想把它取�
 
 ### 0.建立環境 (Windows>=7)
 
-#### (1)安裝choco ([參考來源](https://www.nvda.org.tw/refined/ui=2004100000tm=1989344034))
+####  (1) 安裝choco ([參考來源](https://www.nvda.org.tw/refined/ui=2004100000tm=1989344034))
 - Windows10：win + x 游標上下選擇到 windows powershell (工作管理員) 進入
 
 - Windows11：win + x 游標上下選擇到 終端機 (系統管理員) 進入
 
-```Get-ExecutionPolicy```
+- 輸入```Get-ExecutionPolicy```
 
-##### 如果顯示 Ristricted，則再執行以下指令，如果顯示 RemoteSigned，則不須執行以下指令。
-
-```Set-ExecutionPolicy AllSigned```
-
-```按 y 繼續```
-
-##### 安裝 chocolatey
-
-```Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))```
-
-#### (2)安裝MSYS2([MSYS2官網](https://www.msys2.org/))
-上方超連結點進去，跟著Installation，我這邊下載的是```msys2-x86_64-20240113.exe```，打開安裝檔，選擇安裝路徑，完成安裝後會看到start menu多了好幾個MSYS2的shell，在這個專案內我們只會用到MSYS2 MINIGW64。
+- 如果顯示 ```Ristricted```，則再執行```Set-ExecutionPolicy AllSigned```，並輸入```y```繼續；如果顯示 ```RemoteSigned```，則不須執行。
 
 
-#### (3)安裝OpenSSL
-##### 打開PowerShell
-```choco install OpenSSL.Light```
-##### 重開PowerShell
+- 安裝 chocolatey
 
-#### Install xxd in MSYS2-terminal
-- pacman -S vim
+- 輸入```Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))```
 
-#### Install bc in MSYS2-terminal
-- pacman -S bc
+- 重新開啟Powershell視窗
+
+- 輸入```choco```，確認是否有chocolatey版本訊息正常顯示
+
+#### (2) 安裝MSYS2([MSYS2官網](https://www.msys2.org/))
+- 上方超連結點進去，跟著Installation，我這邊下載的是```msys2-x86_64-20240113.exe```
+- 打開安裝檔，選擇安裝路徑，完成安裝後會看到start menu多了好幾個MSYS2的shell，在這個專案內我們只會用到MSYS2 MINIGW64。
+
+
+#### (3) 安裝OpenSSL
+- 打開PowerShell
+  
+- 輸入```choco install OpenSSL.Light```
+
+- 遇到```Do you want to run the script?([Y]es/[A]ll - yes to all/[N]o/[P]rint): ```，輸入```A```同意所有程式碼繼續執行
+
+- 重開機
+
+#### (4) 安裝xxd
+- 打開MSYS2
+- 輸入```pacman -S vim```
+
+#### (5) 安裝bc
+- 打開MSYS2
+- 輸入```pacman -S bc```
 
 
 ### 1.在windows上編譯Profanity3
-如果需要Linux的編譯方式，可以移駕到Profanity3原文，這裡因為篇幅關係只放Windows的
+###### 如果需要Linux的編譯方式，可以移駕到Profanity3原文，這裡因為篇幅關係只放Windows的
 
-## Compile for Windows
-
-打開MSYS2 MINIGW64 (一定只能開這個版本，其他版本會編譯失敗)
+- 打開MSYS2 MINIGW64 (一定只能開這個版本，其他版本會編譯失敗)
 ![image](https://github.com/brianoy/profanity3/assets/24865458/96be05a9-2425-4a1b-9a40-ce1b1a3d7c98)
-- Open MSYS2 (MINIGW64) shell (do not try other versions)
-- ```pacman -S mingw-w64-x86_64-toolchain mingw-w64-x86_64-opencl-headers```
-- ```pacman -S base-devel gcc vim cmake```
-- ```pacman -S mingw-w64-x86_64-bc```
-- cd /C/VANITY/profanity3WINx64
-- make -f Makefile.WIN
-- ./profanity3.exe
+
+  MSYS2不支援```Ctrl+V```的貼上功能，請使用```Shift+Insert```，或是滑鼠右鍵```Paste```
+
+- 輸入```pacman -S mingw-w64-x86_64-toolchain mingw-w64-x86_64-opencl-headers```
+- 輸入```pacman -S base-devel gcc vim cmake```
+- 輸入```pacman -S mingw-w64-x86_64-bc```
+  
+  
+  
+- 請將位址改成你放profanity3WINx64的實際資料夾位置，輸入```cd /C/somewhere/in/your/computer/profanity3WINx64```，須注意路徑引用問題，不要使用```\```反斜線
+- Windows系統請輸入```make -f Makefile.WIN```
+- 編譯完成
+- 輸入```./profanity3.exe```
 
 ### 2.生成一串公鑰A 以及 私鑰A (絕對只能在本地端執行)
 
 
-通過 openssl 在 MSYS2 終端生成私鑰和公鑰（從公鑰中刪除前綴 "04"）：
+透過 openssl 在 MSYS2 終端生成私鑰和公鑰（從公鑰中刪除前綴 "04"）：
 ```bash
 $ openssl ecparam -genkey -name secp256k1 -text -noout -outform DER | xxd -p -c 1000 | sed 's/41534e31204f49443a20736563703235366b310a30740201010420/Private Key: /' | sed 's/a00706052b8104000aa144034200/\'$'\nPublic Key: /'
 ```
 
+您將會得到：
+
+私鑰A: ```Private Key: 8825e602379969a2e97297601eccf47285f8dd4fedfae2d1684452415623dac3```
+
+公鑰A: ```Public Key: 04e9507a57c01e9e18a929366813909bbc14b2d702a46c056df77465774d449e48b9f9c2279bb9a5996d2bd2c9f5c9470727f7f69c11f7eeee50efeaf97107a09c```
+
+我們需要將Public Key的```04```前綴刪除，實際得到：```e9507a57c01e9e18a929366813909bbc14b2d702a46c056df77465774d449e48b9f9c2279bb9a5996d2bd2c9f5c9470727f7f69c11f7eeee50efeaf97107a09c```這串128碼16進位數的公鑰。
+
 ### 3.碰撞計算(可以外包)
+###### 此範例是指定待擬合的公鑰，並尋找(碰撞)其私鑰
+
+```bash
+./profanity3.exe -z e9507a57c01e9e18a929366813909bbc14b2d702a46c056df77465774d449e48b9f9c2279bb9a5996d2bd2c9f5c9470727f7f69c11f7eeee50efeaf97107a09c --matching 888888XXXXXXXXXXXXXXXXXXXXXXXXXXXX888888
+
+> Time: 255s Score: 5 Private: 0x00004ef54fa692de2b8a0c6ee30b63f96cf8b785ca21a373b400ea2b0b2facaf Address: 0x8888c2664dcabec06ba8b89660b6f40fbf888888
+```
+
+您將會得到：
+私鑰B: ```Private: 0x00004ef54fa692de2b8a0c6ee30b63f96cf8b785ca21a373b400ea2b0b2facaf```
+
+公鑰B: ```Address: 0x8888c2664dcabec06ba8b89660b6f40fbf888888```
 
 
 ### 4.合併私鑰(絕對只能在本地端執行)
 
-```私鑰A = 初始私鑰```
-```私鑰B = 碰撞後產生的私鑰```
+> ```私鑰A = 初始私鑰```
+> ```私鑰B = 碰撞後產生的私鑰```
+
+私鑰A: ```8825e602379969a2e97297601eccf47285f8dd4fedfae2d1684452415623dac3```
+
+私鑰B: ```00004ef54fa692de2b8a0c6ee30b63f96cf8b785ca21a373b400ea2b0b2facaf```
+
+
+#### 從MSYS2 終端機
+
 請確保計算時兩個私鑰都是```XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX```，不須加上雙引號```""```、單引號```''```、前綴```0x```，為64碼16進位數。
 
-#### MSYS2 終端
-
-Use private keys as 64-symbol hexadecimal string WITHOUT `0x` prefix:
+格式為：
 ```bash
 (echo 'ibase=16;obase=10' && (echo '(私鑰A + 私鑰B) % FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F' | tr '[:lower:]' '[:upper:]')) | bc
 ```
 
-#### Python bash
+在此範例，也就是：
+```bash
+$ (echo 'ibase=16;obase=10' && (echo '(8825e602379969a2e97297601eccf47285f8dd4fedfae2d1684452415623dac3 + 00004ef54fa692de2b8a0c6ee30b63f96cf8b785ca21a373b400ea2b0b2facaf) % FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F' | tr '[:lower:]' '[:upper:]')) | bc
 
-Use private keys as 64-symbol hexadecimal string WITH `0x` prefix:
+882634F7873FFC8114FCA3CF01D8586BF2F194D5B81C86451C453C6C61538772
+```
+
+
+實際私鑰C為0x882634F7873FFC8114FCA3CF01D8586BF2F194D5B81C86451C453C6C61538772
+
+
+
+#### 從Python bash
+
+請確保計算時兩個私鑰都是```0xXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX```，不須加上雙引號```""```、單引號```''```，需加上前綴```0x```，```0x```後為64碼16進位數。
+
+格式為：
 ```bash
 $ python3
 >>> hex((私鑰A + 私鑰B) % 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F)
+```
+
+在此範例，也就是
+```bash
+C:\Users\user>python
+Python 3.8.6 (tags/v3.8.6:db45529, Sep 23 2020, 15:52:53) [MSC v.1927 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+>>> hex((0x8825e602379969a2e97297601eccf47285f8dd4fedfae2d1684452415623dac3 + 0x00004ef54fa692de2b8a0c6ee30b63f96cf8b785ca21a373b400ea2b0b2facaf) % 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F)
+'0x882634f7873ffc8114fca3cf01d8586bf2f194d5b81c86451c453c6c61538772'
 ```
 
 #### handle "Leading Zero"-Bug (Example and Fix)
@@ -216,30 +278,7 @@ $ python3
       corners to improve overall performance.
 ```
 
-## 範例
-```bash
-STEP 1: create a random private and public key-pair
-$ openssl ecparam -genkey -name secp256k1 -text -noout -outform DER | xxd -p -c 1000 | sed 's/41534e31204f49443a20736563703235366b310a30740201010420/Private Key: /' | sed 's/a00706052b8104000aa144034200/\'$'\nPublic Key: /'
-> Private Key: 8825e602379969a2e97297601eccf47285f8dd4fedfae2d1684452415623dac3
-> Public Key: 04e9507a57c01e9e18a929366813909bbc14b2d702a46c056df77465774d449e48b9f9c2279bb9a5996d2bd2c9f5c9470727f7f69c11f7eeee50efeaf97107a09c
 
-remove prefix 04 from public-key 
-
-STEP 2: search for privates keys
-$ ./profanity3.exe -z e9507a57c01e9e18a929366813909bbc14b2d702a46c056df77465774d449e48b9f9c2279bb9a5996d2bd2c9f5c9470727f7f69c11f7eeee50efeaf97107a09c --matching 888888XXXXXXXXXXXXXXXXXXXXXXXXXXXX888888
-> Time: 255s Score: 5 Private: 0x00004ef54fa692de2b8a0c6ee30b63f96cf8b785ca21a373b400ea2b0b2facaf Address: 0x8888c2664dcabec06ba8b89660b6f40fbf888888
-
-STEP 3: merge private keys (without prefix 0x)
-PRIVATE_KEY_A=8825e602379969a2e97297601eccf47285f8dd4fedfae2d1684452415623dac3
-PRIVATE_KEY_B=00004ef54fa692de2b8a0c6ee30b63f96cf8b785ca21a373b400ea2b0b2facaf
-
-$ (echo 'ibase=16;obase=10' && (echo '(8825e602379969a2e97297601eccf47285f8dd4fedfae2d1684452415623dac3 + 00004ef54fa692de2b8a0c6ee30b63f96cf8b785ca21a373b400ea2b0b2facaf) % FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F' | tr '[:lower:]' '[:upper:]')) | bc
-> 882634F7873FFC8114FCA3CF01D8586BF2F194D5B81C86451C453C6C61538772
-
-add prefix 0x
-
-PRIVATE_KEY=0x882634F7873FFC8114FCA3CF01D8586BF2F194D5B81C86451C453C6C61538772
-```
 
 
 
