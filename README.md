@@ -3,7 +3,7 @@
 
 ## 簡介
 
-Profanity 可以用來生成EVM虛榮地址/虛名地址(我比較想把它取名叫做自訂地址 台灣人不管怎麼翻都很奇怪 有查到香港可以叫做靚號地址)
+Profanity 可以用來生成EVM虛榮地址/虛名地址 (我比較想把它取名叫做自訂地址 台灣人不管怎麼翻都很奇怪 有查到香港可以叫做靚號地址)
 
 為什麼需要生成這些地址? 請google「漢明權重」。簡單的來說，在以太坊內，公鑰地址內越多成雙成對的「0」，就越可以降低所需的gas fee，對於一些耗gas的智能合約來說能省gas就省gas([參考來源](https://www.odaily.news/post/5183914))。
 同時它也可以生成像是0x5269...、0x8888...、0x6666...、0xdead...等開頭，或是0xdead...dead等的部分字元自訂的公鑰，在只有0~F的字海中發現這個酷酷ㄉ地址，還可以順便跟幣友炫耀(。
@@ -33,7 +33,7 @@ Profanity 可以用來生成EVM虛榮地址/虛名地址(我比較想把它取�
 
 > DYOR (Do Your Own Research.)
 
-該專案的先前版本（也就是Profanity）存在隨機源(種子)不佳的問題，可參考下方連結，該問題使攻擊者可以在給定公鑰的情況下恢復私鑰，也導致了2022年造市商Wintermute被盜了約50億台幣：
+該專案的先前版本 (也就是Profanity) 存在隨機源 (種子) 不佳的問題，可參考下方連結，該問題使攻擊者可以在給定公鑰的情況下恢復私鑰，也導致了2022年造市商Wintermute被盜了約50億台幣，相關訊息：
 
 [1inch漏洞消息](https://blog.1inch.io/a-vulnerability-disclosed-in-profanity-an-ethereum-vanity-address-tool/) 
 
@@ -43,11 +43,11 @@ Profanity 可以用來生成EVM虛榮地址/虛名地址(我比較想把它取�
 
 > 該專案的源代碼不需要任何審核，但仍然保證安全使用。
 
-"profanity2" 專案不生成金鑰（恰好與 "profanity" 相反）。它調整用戶提供公鑰的偏移值，直到發現所需的虛榮地址。使用`-z`參數，後面以128 字符十六進制字符串的形式提供種子公鑰，然後將結果的私鑰添加到種子私鑰中，以獲得具有所需虛榮地址的最終私鑰（請記住：私鑰只是256位數），這甚至可以將中間碰撞的過程外包給完全不可靠的人，而它仍然是安全的(理論上)。
+"profanity2" 專案不生成金鑰 (恰好與 "profanity" 相反)。它調整用戶提供公鑰的偏移值，直到發現所需的虛榮地址。使用`-z`參數，後面以128 字符十六進制字符串的形式提供種子公鑰，然後將結果的私鑰添加到種子私鑰中，以獲得具有所需虛榮地址的最終私鑰 (請記住：私鑰只是256位數)，這甚至可以將中間碰撞的過程外包給完全不可靠的人，而它仍然是安全的 (理論上)。
 
-## 使用教學(Windows Only)
+## 使用教學 (Windows Only)
 
-### 0.建立環境 (Windows>=7)
+### 0.建立環境 (Windows >= 7)
 
 ####  (1) 安裝choco ([參考來源](https://www.nvda.org.tw/refined/ui=2004100000tm=1989344034))
 - Windows10：win + x 游標上下選擇到 windows powershell (工作管理員) 進入
@@ -67,7 +67,7 @@ Profanity 可以用來生成EVM虛榮地址/虛名地址(我比較想把它取�
 
 - 輸入```choco```，確認是否有chocolatey版本訊息正常顯示
 
-#### (2) 安裝MSYS2([MSYS2官網](https://www.msys2.org/))
+#### (2) 安裝MSYS2 ([MSYS2官網](https://www.msys2.org/))
 - 上方超連結點進去，跟著Installation，我這邊下載的是```msys2-x86_64-20240113.exe```
 - 打開安裝檔，選擇安裝路徑，完成安裝後會看到start menu多了好幾個MSYS2的shell，在這個專案內我們只會用到MSYS2 MINIGW64。
 
@@ -93,10 +93,12 @@ Profanity 可以用來生成EVM虛榮地址/虛名地址(我比較想把它取�
 ### 1.在windows上編譯Profanity3
 ###### 如果需要Linux的編譯方式，可以移駕到Profanity3原文，這裡因為篇幅關係只放Windows的
 
-- 打開MSYS2 MINIGW64 (一定只能開這個版本，其他版本會編譯失敗)
-![image](https://github.com/brianoy/profanity3/assets/24865458/96be05a9-2425-4a1b-9a40-ce1b1a3d7c98)
+###### MSYS2的```Ctrl+V```並非貼上，請使用```Shift+Insert```，或是滑鼠右鍵```Paste```
 
-  MSYS2不支援```Ctrl+V```的貼上功能，請使用```Shift+Insert```，或是滑鼠右鍵```Paste```
+- 打開MSYS2 MINIGW64 (一定只能開這個版本，其他版本會編譯失敗)
+  
+<img src="https://github.com/brianoy/profanity3/assets/24865458/96be05a9-2425-4a1b-9a40-ce1b1a3d7c98" width="50%" >
+
 
 - 輸入```pacman -S mingw-w64-x86_64-toolchain mingw-w64-x86_64-opencl-headers```
 - 輸入```pacman -S base-devel gcc vim cmake```
@@ -110,7 +112,6 @@ Profanity 可以用來生成EVM虛榮地址/虛名地址(我比較想把它取�
 - 輸入```./profanity3.exe```
 
 ### 2.生成一串公鑰A 以及 私鑰A (絕對只能在本地端執行)
-
 
 透過 openssl 在 MSYS2 終端生成私鑰和公鑰（從公鑰中刪除前綴 "04"）：
 ```bash
@@ -135,6 +136,7 @@ $ openssl ecparam -genkey -name secp256k1 -text -noout -outform DER | xxd -p -c 
 ```
 
 您將會得到：
+
 私鑰B: ```Private: 0x00004ef54fa692de2b8a0c6ee30b63f96cf8b785ca21a373b400ea2b0b2facaf```
 
 公鑰B: ```Address: 0x8888c2664dcabec06ba8b89660b6f40fbf888888```
@@ -142,46 +144,51 @@ $ openssl ecparam -genkey -name secp256k1 -text -noout -outform DER | xxd -p -c 
 
 ### 4.合併私鑰(絕對只能在本地端執行)
 
+- 格式為：
+  
 > ```私鑰A = 初始私鑰```
+> 
 > ```私鑰B = 碰撞後產生的私鑰```
 
-私鑰A: ```8825e602379969a2e97297601eccf47285f8dd4fedfae2d1684452415623dac3```
+私鑰A = ```8825e602379969a2e97297601eccf47285f8dd4fedfae2d1684452415623dac3```
 
-私鑰B: ```00004ef54fa692de2b8a0c6ee30b63f96cf8b785ca21a373b400ea2b0b2facaf```
+私鑰B = ```00004ef54fa692de2b8a0c6ee30b63f96cf8b785ca21a373b400ea2b0b2facaf```
 
 
 #### 從MSYS2 終端機
 
-請確保計算時兩個私鑰都是```XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX```，不須加上雙引號```""```、單引號```''```、前綴```0x```，為64碼16進位數。
+- 請確保計算時兩個私鑰都是```XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX```，不須加上雙引號```""```、單引號```''```、前綴```0x```，為64碼16進位數。
 
-格式為：
-```bash
-(echo 'ibase=16;obase=10' && (echo '(私鑰A + 私鑰B) % FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F' | tr '[:lower:]' '[:upper:]')) | bc
-```
+- 終端機輸入格式為：
+  
+> ```(echo 'ibase=16;obase=10' && (echo '(私鑰A + 私鑰B) % FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F' | tr '[:lower:]' '[:upper:]')) | bc```
 
-在此範例，也就是：
+- 在此範例，也就是：
+
+- 開啟MSYS2 終端機
 ```bash
 $ (echo 'ibase=16;obase=10' && (echo '(8825e602379969a2e97297601eccf47285f8dd4fedfae2d1684452415623dac3 + 00004ef54fa692de2b8a0c6ee30b63f96cf8b785ca21a373b400ea2b0b2facaf) % FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F' | tr '[:lower:]' '[:upper:]')) | bc
 
 882634F7873FFC8114FCA3CF01D8586BF2F194D5B81C86451C453C6C61538772
 ```
 
+- 自行加上```0x```前綴，可得實際私鑰C：```0x882634F7873FFC8114FCA3CF01D8586BF2F194D5B81C86451C453C6C61538772```
 
-實際私鑰C為0x882634F7873FFC8114FCA3CF01D8586BF2F194D5B81C86451C453C6C61538772
-
-
-
-#### 從Python bash
+#### 從Python shell(非python程式)
 
 請確保計算時兩個私鑰都是```0xXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX```，不須加上雙引號```""```、單引號```''```，需加上前綴```0x```，```0x```後為64碼16進位數。
 
-格式為：
-```bash
-$ python3
->>> hex((私鑰A + 私鑰B) % 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F)
-```
+- 終端機輸入格式為：
 
-在此範例，也就是
+> ```python3```
+> 
+> ```hex((私鑰A + 私鑰B) % 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F)```
+
+
+在此範例，也就是：
+
+- 開啟powershell終端機或cmd終端機
+  
 ```bash
 C:\Users\user>python
 Python 3.8.6 (tags/v3.8.6:db45529, Sep 23 2020, 15:52:53) [MSC v.1927 64 bit (AMD64)] on win32
@@ -189,6 +196,9 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> hex((0x8825e602379969a2e97297601eccf47285f8dd4fedfae2d1684452415623dac3 + 0x00004ef54fa692de2b8a0c6ee30b63f96cf8b785ca21a373b400ea2b0b2facaf) % 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F)
 '0x882634f7873ffc8114fca3cf01d8586bf2f194d5b81c86451c453c6c61538772'
 ```
+
+
+- 可得實際私鑰C：```0x882634F7873FFC8114FCA3CF01D8586BF2F194D5B81C86451C453C6C61538772```
 
 #### handle "Leading Zero"-Bug (Example and Fix)
 ```bash
