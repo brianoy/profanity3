@@ -37,7 +37,6 @@ Profanity 可以用來生成EVM虛榮地址/虛名地址
 該專案的先前版本 (也就是Profanity) 存在隨機源 (種子) 不佳的問題，可參考下方連結，該問題使攻擊者可以在給定公鑰的情況下恢復私鑰，也導致了2022年造市商Wintermute被盜了約50億台幣，相關訊息：
 
 [1inch漏洞消息](https://blog.1inch.io/a-vulnerability-disclosed-in-profanity-an-ethereum-vanity-address-tool/) 
-
 [鉅亨消息/金色財經快訊](https://news.cnyes.com/news/id/4955767) 
 
 此專案大部分的代碼都基於1inch團隊後來修改的Profanity2程式。他們說：
@@ -119,101 +118,103 @@ Profanity 可以用來生成EVM虛榮地址/虛名地址
 $ openssl ecparam -genkey -name secp256k1 -text -noout -outform DER | xxd -p -c 1000 | sed 's/41534e31204f49443a20736563703235366b310a30740201010420/Private Key: /' | sed 's/a00706052b8104000aa144034200/\'$'\nPublic Key: /'
 ```
 
-您將會得到：
+得到：
 
-私鑰A: ```Private Key: 8825e602379969a2e97297601eccf47285f8dd4fedfae2d1684452415623dac3```
+私鑰A = ```Private Key: 8825e602379969a2e97297601eccf47285f8dd4fedfae2d1684452415623dac3```
 
-公鑰A: ```Public Key: 04e9507a57c01e9e18a929366813909bbc14b2d702a46c056df77465774d449e48b9f9c2279bb9a5996d2bd2c9f5c9470727f7f69c11f7eeee50efeaf97107a09c```
+公鑰A = ```Public Key: 04e9507a57c01e9e18a929366813909bbc14b2d702a46c056df77465774d449e48b9f9c2279bb9a5996d2bd2c9f5c9470727f7f69c11f7eeee50efeaf97107a09c```
 
-我們需要將Public Key的```04```前綴刪除，實際得到：```e9507a57c01e9e18a929366813909bbc14b2d702a46c056df77465774d449e48b9f9c2279bb9a5996d2bd2c9f5c9470727f7f69c11f7eeee50efeaf97107a09c```這串128碼16進位數的公鑰。
+我們需要將公鑰A的```04```前綴刪除，實際得到：```e9507a57c01e9e18a929366813909bbc14b2d702a46c056df77465774d449e48b9f9c2279bb9a5996d2bd2c9f5c9470727f7f69c11f7eeee50efeaf97107a09c```這串128碼16進位數的公鑰A。
 
-### 3.碰撞計算(可以外包)
+### 3.利用公鑰A 碰撞計算私鑰B (可以外包)
 ###### 此範例是指定待擬合的公鑰，並尋找(碰撞)其私鑰
 
+- 格式：
+```bash
+./profanity3.exe -z 公鑰A --matching 888888XXXXXXXXXXXXXXXXXXXXXXXXXXXX888888
+```
+
+- 範例：
 ```bash
 ./profanity3.exe -z e9507a57c01e9e18a929366813909bbc14b2d702a46c056df77465774d449e48b9f9c2279bb9a5996d2bd2c9f5c9470727f7f69c11f7eeee50efeaf97107a09c --matching 888888XXXXXXXXXXXXXXXXXXXXXXXXXXXX888888
+```
 
+- 得到：
+```bash
 > Time: 255s Score: 5 Private: 0x00004ef54fa692de2b8a0c6ee30b63f96cf8b785ca21a373b400ea2b0b2facaf Address: 0x8888c2664dcabec06ba8b89660b6f40fbf888888
 ```
 
-您將會得到：
+私鑰B = ```Private: 0x00004ef54fa692de2b8a0c6ee30b63f96cf8b785ca21a373b400ea2b0b2facaf```
 
-私鑰B: ```Private: 0x00004ef54fa692de2b8a0c6ee30b63f96cf8b785ca21a373b400ea2b0b2facaf```
-
-公鑰B: ```Address: 0x8888c2664dcabec06ba8b89660b6f40fbf888888```
+公鑰B = ```Address: 0x8888c2664dcabec06ba8b89660b6f40fbf888888```
 
 
 ### 4.合併私鑰(絕對只能在本地端執行)
+###### 可以使用MSYS2 終端機或Python shell來執行
 
 - 格式為：
-  
-> ```私鑰A = 初始私鑰```
-> 
-> ```私鑰B = 碰撞後產生的私鑰```
+```bash
+私鑰A = 初始私鑰
+私鑰B = 碰撞後產生的私鑰
+```
 
 私鑰A = ```8825e602379969a2e97297601eccf47285f8dd4fedfae2d1684452415623dac3```
 
 私鑰B = ```00004ef54fa692de2b8a0c6ee30b63f96cf8b785ca21a373b400ea2b0b2facaf```
 
 
-#### 從MSYS2 終端機
+### 方法一：從MSYS2 終端機
 
-- 請確保計算時兩個私鑰都是```XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX```，不須加上雙引號```""```、單引號```''```、前綴```0x```，為64碼16進位數。
+- 請確保計算時兩個私鑰都是```XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX```，不須加上雙引號```""```、不須加上單引號```''```、不須加上前綴```0x```，為64碼16進位數。
 
 - 終端機輸入格式為：
-  
-> ```(echo 'ibase=16;obase=10' && (echo '(私鑰A + 私鑰B) % FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F' | tr '[:lower:]' '[:upper:]')) | bc```
+```bash
+> (echo 'ibase=16;obase=10' && (echo '(私鑰A + 私鑰B) % FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F' | tr '[:lower:]' '[:upper:]')) | bc
+```
 
 - 在此範例，也就是：
 
-- 開啟MSYS2 終端機
+(1)開啟MSYS2 終端機
   
-輸入
+(2)輸入：
 ```bash
 $ (echo 'ibase=16;obase=10' && (echo '(8825e602379969a2e97297601eccf47285f8dd4fedfae2d1684452415623dac3 + 00004ef54fa692de2b8a0c6ee30b63f96cf8b785ca21a373b400ea2b0b2facaf) % FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F' | tr '[:lower:]' '[:upper:]')) | bc
+```
 
+(3)得到：
+```bash
 882634F7873FFC8114FCA3CF01D8586BF2F194D5B81C86451C453C6C61538772
 ```
 
 - 自行加上```0x```前綴，可得實際私鑰C：```0x882634F7873FFC8114FCA3CF01D8586BF2F194D5B81C86451C453C6C61538772```
 
-#### 從Python shell(非python程式)
+### 方法二：從Python shell(非python程式)
 
-請確保計算時兩個私鑰都是```0xXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX```，不須加上雙引號```""```、單引號```''```，需加上前綴```0x```，```0x```後為64碼16進位數。
+請確保計算時兩個私鑰都是```0xXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX```，不須加上雙引號```""```、不須加上單引號```''```，需加上前綴```0x```，```0x```後為64碼16進位數。
 
 - 終端機輸入格式為：
-
-> ```python3```
-> 
-> ```hex((私鑰A + 私鑰B) % 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F)```
-
+```bash
+> hex((私鑰A + 私鑰B) % 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F)
+```
 
 在此範例，也就是：
 
-- 開啟powershell終端機或cmd終端機
+(1)開啟powershell終端機或cmd終端機
 
-- 輸入```python```，進入```python shell```
-  
+(2)輸入```python```，進入```python shell```
+
+(3)輸入：
 ```bash
 >>> hex((0x8825e602379969a2e97297601eccf47285f8dd4fedfae2d1684452415623dac3 + 0x00004ef54fa692de2b8a0c6ee30b63f96cf8b785ca21a373b400ea2b0b2facaf) % 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F)
+```
+
+(4)得到：
+```bash
 '0x882634f7873ffc8114fca3cf01d8586bf2f194d5b81c86451c453c6c61538772'
 ```
+- 實際私鑰C：```0x882634F7873FFC8114FCA3CF01D8586BF2F194D5B81C86451C453C6C61538772```
 
-
-- 可得實際私鑰C：```0x882634F7873FFC8114FCA3CF01D8586BF2F194D5B81C86451C453C6C61538772```
-
-#### 處理前導0問題
-
-```bash
->>> (echo 'ibase=16;obase=10' && (echo '(0bc657b0af28b743c7f0d49c4de78efd47a5c8923dabfdef051fff5cdc7c30e7 + 0x0000f8ba428990fca1e618a252ac3614f5de19b20ff00c2ded57bfb6933830aa) % FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F' | tr '[:lower:]' '[:upper:]')) | bc
->>> BC7506AF1B2484069D6ED3EA093C5123D83E2444D9C0A1CF277BF226FB49AD0
-```
-此範例中會看到生成的私鑰```BC7506AF1B2484069D6ED3EA093C5123D83E2444D9C0A1CF277BF226FB49AD0```為63碼，只須向前面補0直到64碼即可```0BC7506AF1B2484069D6ED3EA093C5123D83E2444D9C0A1CF277BF226FB49AD0```，所以實際私鑰為：```0x0BC7506AF1B2484069D6ED3EA093C5123D83E2444D9C0A1CF277BF226FB49AD0```
-
-這是由於私鑰A和私鑰B的求和過程中未在最終生成的十六進制中顯示前導0。
-
-
-## profanity3 完整說明
+## profanity3 help file
 ```
 
   強制參數：
@@ -311,7 +312,7 @@ $ (echo 'ibase=16;obase=10' && (echo '(8825e602379969a2e97297601eccf47285f8dd4fe
 |Apple Silicon M1 Max<br/>(32-core GPU)|-|-|-|172.0 MH/s| ~25s
 
 ### 修正參數
-以使用RTX 3070, 8G RAM, 46 compute units (precompiled = no)為例，輸入修正參數，可以有效的加強性能：
+使用RTX 3070, 8G RAM為例，輸入修正參數，可以有效的加強性能：
 
 ```bash
 .\profanity3 -I 64384 -w 64384 -i 512 -z e9507a57c01e9e18a929366813909bbc14b2d702a46c056df77465774d449e48b9f9c2279bb9a5996d2bd2c9f5c9470727f7f69c11f7eeee50efeaf97107a09c --leading-doubles 
@@ -339,7 +340,7 @@ $$\frac{\log{(0.5)}}{\log{(1-\frac{1}{{16}^n})}}\div H (H/sec)=t (sec)$$
 **以3070為例，算力為440MH/s，並且50%的碰撞機率，擬合12碼：**
 $$\frac{\log{(0.5)}}{\log{(1-\frac{1}{{16}^{12}})}}\div\frac{440000000\ (H/sec)}{60\times60\times24\ (sec)}=5.13\ (days)$$
 
-**440MH/s**
+**440MH/s算力花費時間**
 |字元擬合數量|碰撞50%花費時間
 |:-:|:-:|
 |7碼|0.5秒|
@@ -360,4 +361,26 @@ $$\frac{\log{(0.5)}}{\log{(1-\frac{1}{{16}^{12}})}}\div\frac{440000000\ (H/sec)}
 ## debug Q&A
 ### 1.python shell叫不出來
 
+> 請確認python是否有在環境變數裡面
 
+
+### 2.處理前導0問題
+
+```bash
+>>> (echo 'ibase=16;obase=10' && (echo '(0bc657b0af28b743c7f0d49c4de78efd47a5c8923dabfdef051fff5cdc7c30e7 + 0x0000f8ba428990fca1e618a252ac3614f5de19b20ff00c2ded57bfb6933830aa) % FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F' | tr '[:lower:]' '[:upper:]')) | bc
+>>> BC7506AF1B2484069D6ED3EA093C5123D83E2444D9C0A1CF277BF226FB49AD0
+```
+此範例中會看到生成的私鑰```BC7506AF1B2484069D6ED3EA093C5123D83E2444D9C0A1CF277BF226FB49AD0```為63碼，只須向前面補0直到64碼即可```0BC7506AF1B2484069D6ED3EA093C5123D83E2444D9C0A1CF277BF226FB49AD0```，所以實際私鑰為：```0x0BC7506AF1B2484069D6ED3EA093C5123D83E2444D9C0A1CF277BF226FB49AD0```
+
+因為私鑰A和私鑰B的求和過程中未在生成的十六進制中顯示前導0。
+
+
+### 3.編譯失敗
+遇到：
+```bash
+profanity.cpp:16:10: fatal error: CL/cl.h: No such file or directory
+16 | #include <CL/cl.h>
+| ^~~~~~~~~
+compilation terminated.
+```
+> 請確認開啟的視窗是否為MSYS2 MINGW64，而非MSYS2 MSYS
