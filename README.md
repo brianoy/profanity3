@@ -340,7 +340,7 @@ $ (echo 'ibase=16;obase=10' && (echo '(8825e602379969a2e97297601eccf47285f8dd4fe
 使用RTX 3070, 8G RAM為例，輸入修正參數，可以有效的加強性能：
 
 ```bash
-.\profanity3 -I 64384 -w 64384 -i 512 -z e9507a57c01e9e18a929366813909bbc14b2d702a46c056df77465774d449e48b9f9c2279bb9a5996d2bd2c9f5c9470727f7f69c11f7eeee50efeaf97107a09c --leading-doubles 
+./profanity3 -I 64384 -w 64384 -i 512 -z e9507a57c01e9e18a929366813909bbc14b2d702a46c056df77465774d449e48b9f9c2279bb9a5996d2bd2c9f5c9470727f7f69c11f7eeee50efeaf97107a09c --leading-doubles 
 ```
 **RTX3070超頻**
 |型號|Δ核心頻率|Δ記憶體頻率|算力(百萬哈希/秒)
