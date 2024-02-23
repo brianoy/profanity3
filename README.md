@@ -332,6 +332,8 @@ $ (echo 'ibase=16;obase=10' && (echo '(8825e602379969a2e97297601eccf47285f8dd4fe
 |GTX 1070 OC|1950|4450|NO|179.0 MH/s| ~24s
 |GTX 1070|1750|4000|NO|163.0 MH/s| ~26s
 |GTX 1060 3GB OC|2050|4212|NO|101.0 MH/s| 
+|GTX 1650 4GB notebook|1785|6120|-I 64384 -w 64384 -i 512|123.5 MH/s| 
+|GTX 1650 4GB notebook|1785|6120|-i 512|115.3 MH/s| 
 |RX 480|1328|2000|YES|120.0 MH/s| ~36s
 |Apple Silicon M1<br/>(8-core GPU)|-|-|-|45.0 MH/s| ~97s
 |Apple Silicon M1 Max<br/>(32-core GPU)|-|-|-|172.0 MH/s| ~25s
@@ -384,12 +386,12 @@ $$\frac{\log{(0.5)}}{\log{(1-\frac{1}{{16}^{12}})}}\div\frac{440000000\ (H/sec)}
 
 
 ## debug Q&A
-### 1.python shell叫不出來
+### 1. python shell叫不出來
 
 > 請確認python是否有在環境變數裡面
 
 
-### 2.處理前導0問題
+### 2. 處理前導0問題
 
 ```bash
 >>> (echo 'ibase=16;obase=10' && (echo '(0bc657b0af28b743c7f0d49c4de78efd47a5c8923dabfdef051fff5cdc7c30e7 + 0x0000f8ba428990fca1e618a252ac3614f5de19b20ff00c2ded57bfb6933830aa) % FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F' | tr '[:lower:]' '[:upper:]')) | bc
@@ -400,7 +402,8 @@ $$\frac{\log{(0.5)}}{\log{(1-\frac{1}{{16}^{12}})}}\div\frac{440000000\ (H/sec)}
 因為私鑰A和私鑰B的求和過程中未在生成的十六進制中顯示前導0。
 
 
-### 3.編譯失敗
+### 3. 編譯失敗
+
 遇到：
 ```bash
 profanity.cpp:16:10: fatal error: CL/cl.h: No such file or directory
@@ -410,7 +413,8 @@ compilation terminated.
 ```
 > 請確認開啟的視窗是否為MSYS2 MINGW64，而非MSYS2 MSYS
 
-### 4.多GPU問題-Segmentation fault
+### 4. 多GPU問題-Segmentation fault
+
 遇到：
 ```bash
 Mode: matching
@@ -422,4 +426,25 @@ Devices:
 Initializing OpenCL...
   Creating context...Segmentation fault
 ```
-> 在原始的profanity和profanity2都有被提及此問題，疑似是多顆GPU的問題，目前無解
+> 在原始的profanity和profanity2都有被提及此問題，我發現疑似是多顆GPU的問題
+> 目前我變更profanity.cpp的269行，迭代時限制使用某一顆GPU，調整```for (size_t i = 0; i < vFoundDevices.size(); ++i)```此處，強迫只迭代GPU0，不讀入GPU1，即可解決
+
+### 5. Building program的-11問題
+
+遇到：
+```bash
+$ ./profanity3.exe -I 64384 -w 64384 -z e9507a57c01e9e18a929366813909bbc14b2d702a46c056df77465774d449e48b9f9c2279bb9a5996d2bd2c9f5c9470727f7f69c11f7eeee50efeaf97107a09c --matching 888888XXXXXXXXXXXXXXXXXXXXXXXXXXXX888888
+Mode: matching
+Target: Address
+Devices:
+  GPU0: NVIDIA GeForce GTX 1650, 4294639616 bytes available, 14 compute units (precompiled = yes)
+
+Initializing OpenCL...
+  Creating context...OK
+  Loading kernel from binary...OK
+  Building program...-11
+```
+> inverse-size的問題，在輸入參數中添加`-i 512`即可解決
+```bash
+$ ./profanity3.exe -I 64384 -w 64384 -i 512 -z e9507a57c01e9e18a929366813909bbc14b2d702a46c056df77465774d449e48b9f9c2279bb9a5996d2bd2c9f5c9470727f7f69c11f7eeee50efeaf97107a09c --matching 888888XXXXXXXXXXXXXXXXXXXXXXXXXXXX888888
+```
