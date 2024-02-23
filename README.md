@@ -17,7 +17,38 @@ Profanity 可以用來生成EVM虛榮地址/虛名地址
 
 - profanity3WINx64 是來自xdeltax 的加強版，增加了對於windows 環境的支援
 
-
+- [profanity3 for windows 中文說明 \& 踩地雷排解](#profanity3-for-windows-中文說明--踩地雷排解)
+          - [以下翻譯內容來自作者xdeltax的profanity3WINx64專案的README.md，有加入本人的一些不專業見解、安裝說明以及踩雷debug之處，非全文照翻](#以下翻譯內容來自作者xdeltax的profanity3winx64專案的readmemd有加入本人的一些不專業見解安裝說明以及踩雷debug之處非全文照翻)
+  - [簡介](#簡介)
+  - [事前了解的知識](#事前了解的知識)
+  - [使用需知](#使用需知)
+          - [在了解這是什麼之前，請不要使用它。](#在了解這是什麼之前請不要使用它)
+  - [使用教學 (Windows Only)](#使用教學-windows-only)
+    - [0.建立環境 (Windows \>= 7)](#0建立環境-windows--7)
+      - [(1) 安裝choco (參考來源)](#1-安裝choco-參考來源)
+      - [(2) 安裝MSYS2 (MSYS2官網)](#2-安裝msys2-msys2官網)
+      - [(3) 安裝OpenSSL](#3-安裝openssl)
+      - [(4) 安裝xxd](#4-安裝xxd)
+      - [(5) 安裝bc](#5-安裝bc)
+    - [1.在windows上編譯Profanity3](#1在windows上編譯profanity3)
+          - [如果需要Linux的編譯方式，可以移駕到Profanity3原文，這裡因為篇幅關係只放Windows的](#如果需要linux的編譯方式可以移駕到profanity3原文這裡因為篇幅關係只放windows的)
+          - [MSYS2的```Ctrl+V```並非貼上，請使用```Shift+Insert```，或是滑鼠右鍵```Paste```](#msys2的ctrlv並非貼上請使用shiftinsert或是滑鼠右鍵paste)
+    - [2.生成一串公鑰A 以及 私鑰A (絕對只能在本地端執行)](#2生成一串公鑰a-以及-私鑰a-絕對只能在本地端執行)
+    - [3.利用公鑰A 碰撞計算私鑰B (可以外包)](#3利用公鑰a-碰撞計算私鑰b-可以外包)
+          - [此範例是指定待擬合的公鑰，並尋找(碰撞)其私鑰](#此範例是指定待擬合的公鑰並尋找碰撞其私鑰)
+    - [4.合併私鑰(絕對只能在本地端執行)](#4合併私鑰絕對只能在本地端執行)
+          - [可以使用MSYS2 終端機或Python shell來執行](#可以使用msys2-終端機或python-shell來執行)
+    - [方法一：從MSYS2 終端機](#方法一從msys2-終端機)
+    - [方法二：從Python shell(非python程式)](#方法二從python-shell非python程式)
+  - [profanity3 help file](#profanity3-help-file)
+  - [效能](#效能)
+    - [修正參數](#修正參數)
+    - [碰撞時間](#碰撞時間)
+  - [debug Q\&A](#debug-qa)
+    - [1.python shell叫不出來](#1python-shell叫不出來)
+    - [2.處理前導0問題](#2處理前導0問題)
+    - [3.編譯失敗](#3編譯失敗)
+    - [4.編譯失敗](#4編譯失敗)
 
 ## 事前了解的知識
 
