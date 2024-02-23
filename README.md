@@ -134,7 +134,7 @@ Profanity 可以用來生成EVM虛榮地址/虛名地址
 - 請將位址改成你放profanity3WINx64的實際資料夾位置，輸入```cd /C/somewhere/in/your/computer/profanity3WINx64```，須注意路徑引用問題，若使用```\```反斜線的路徑，請確保路徑被雙引號包住```""```
 - Windows系統請輸入```make -f Makefile.WIN```
 - 編譯完成
-- 輸入```./profanity3.exe```
+- 輸入```./profanity3.exe```，確認是否得到profanity3的help file
 
 ### 2.生成一串公鑰A 以及 私鑰A (絕對只能在本地端執行)
 
