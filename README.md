@@ -3,10 +3,11 @@
 
 ## 簡介
 
-Profanity 可以用來生成EVM虛榮地址/虛名地址 (我比較想把它取名叫做自訂地址 台灣人不管怎麼翻都很奇怪 有查到香港可以叫做靚號地址)
+Profanity 可以用來生成EVM虛榮地址/虛名地址
+(我比較想把它取名叫做自訂地址 台灣人不管怎麼翻都很奇怪 有查到香港可以叫做靚號地址)
 
 為什麼需要生成這些地址? 請google「漢明權重」。簡單的來說，在以太坊內，公鑰地址內越多成雙成對的「0」，就越可以降低所需的gas fee，對於一些耗gas的智能合約來說能省gas就省gas([參考來源](https://www.odaily.news/post/5183914))。
-同時它也可以生成像是0x5269...、0x8888...、0x6666...、0xdead...等開頭，或是0xdead...dead等的部分字元自訂的公鑰，在只有0~F的字海中發現這個酷酷ㄉ地址，還可以順便跟幣友炫耀(。
+同時它也可以生成像是0x5269...、0x8888...、0x6666...、0xdead...等開頭，或是0xdead...dead等的部分字元自訂的公鑰，在只有0~F的字海中發現這個酷酷ㄉ地址，還可以順便跟幣友炫耀(x。
 
 - Profanity原本是2017年由Johan Gustafsson 推出的專案，後來在2022年被1inch 揭露其隨機生成碼可以被逆向工程導致私鑰外洩，而該專案也被封存
 - Profanity2是後來1inch修改Profanity 的種子碼生成方式，現在可正常使用
@@ -50,9 +51,9 @@ Profanity 可以用來生成EVM虛榮地址/虛名地址 (我比較想把它取�
 ### 0.建立環境 (Windows >= 7)
 
 ####  (1) 安裝choco ([參考來源](https://www.nvda.org.tw/refined/ui=2004100000tm=1989344034))
-- Windows10：win + x 游標上下選擇到 windows powershell (工作管理員) 進入
+- Windows10：win + X 游標上下選擇到 windows powershell (工作管理員) 進入
 
-- Windows11：win + x 游標上下選擇到 終端機 (系統管理員) 進入
+- Windows11：win + X 游標上下選擇到 終端機 (系統管理員) 進入
 
 - 輸入```Get-ExecutionPolicy```
 
@@ -166,6 +167,8 @@ $ openssl ecparam -genkey -name secp256k1 -text -noout -outform DER | xxd -p -c 
 - 在此範例，也就是：
 
 - 開啟MSYS2 終端機
+  
+輸入
 ```bash
 $ (echo 'ibase=16;obase=10' && (echo '(8825e602379969a2e97297601eccf47285f8dd4fedfae2d1684452415623dac3 + 00004ef54fa692de2b8a0c6ee30b63f96cf8b785ca21a373b400ea2b0b2facaf) % FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F' | tr '[:lower:]' '[:upper:]')) | bc
 
@@ -188,11 +191,10 @@ $ (echo 'ibase=16;obase=10' && (echo '(8825e602379969a2e97297601eccf47285f8dd4fe
 在此範例，也就是：
 
 - 開啟powershell終端機或cmd終端機
+
+- 輸入```python```，進入```python shell```
   
 ```bash
-C:\Users\user>python
-Python 3.8.6 (tags/v3.8.6:db45529, Sep 23 2020, 15:52:53) [MSC v.1927 64 bit (AMD64)] on win32
-Type "help", "copyright", "credits" or "license" for more information.
 >>> hex((0x8825e602379969a2e97297601eccf47285f8dd4fedfae2d1684452415623dac3 + 0x00004ef54fa692de2b8a0c6ee30b63f96cf8b785ca21a373b400ea2b0b2facaf) % 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F)
 '0x882634f7873ffc8114fca3cf01d8586bf2f194d5b81c86451c453c6c61538772'
 ```
@@ -200,14 +202,15 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 - 可得實際私鑰C：```0x882634F7873FFC8114FCA3CF01D8586BF2F194D5B81C86451C453C6C61538772```
 
-#### handle "Leading Zero"-Bug (Example and Fix)
+#### 處理前導0問題
+
 ```bash
 >>> (echo 'ibase=16;obase=10' && (echo '(0bc657b0af28b743c7f0d49c4de78efd47a5c8923dabfdef051fff5cdc7c30e7 + 0x0000f8ba428990fca1e618a252ac3614f5de19b20ff00c2ded57bfb6933830aa) % FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F' | tr '[:lower:]' '[:upper:]')) | bc
 >>> BC7506AF1B2484069D6ED3EA093C5123D83E2444D9C0A1CF277BF226FB49AD0
->>> 0BC7506AF1B2484069D6ED3EA093C5123D83E2444D9C0A1CF277BF226FB49AD0 (Pad with 1 zero as length only 63)
 ```
+此範例中會看到生成的私鑰```BC7506AF1B2484069D6ED3EA093C5123D83E2444D9C0A1CF277BF226FB49AD0```為63碼，只須向前面補0直到64碼即可```0BC7506AF1B2484069D6ED3EA093C5123D83E2444D9C0A1CF277BF226FB49AD0```，所以實際私鑰為：```0x0BC7506AF1B2484069D6ED3EA093C5123D83E2444D9C0A1CF277BF226FB49AD0```
 
-請注意，如果生成的少於64 字符，只需向私鑰添加前導零。這是由於PRIVATE_KEY_A和PRIVATE_KEY_B的求和未在最終生成的十六進制中顯示前導0。例如，上面的示例有1個重疊的前導0，因此我們添加了一個額外的零。
+這是由於私鑰A和私鑰B的求和過程中未在最終生成的十六進制中顯示前導0。
 
 
 ## profanity3 完整說明
@@ -292,8 +295,9 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 
 
-## Benchmarks - Current version
-|Model|Clock Speed|Memory Speed|Modified straps|Speed|Time to match eight characters
+## 效能
+### 算力比較
+|型號|核心頻率|記憶體頻率|帶入的修正參數|算力(百萬哈希/秒)|擬合8位數所需時間
 |:-:|:-:|:-:|:-:|:-:|:-:|
 |RTX 3070 OC|1850+191|6800+999|-I 64384 -w 64384 -i 512|501.0 MH/s|
 |RTX 3070 OC|2010|7550|NO|470.0 MH/s|
@@ -305,23 +309,21 @@ Type "help", "copyright", "credits" or "license" for more information.
 |Apple Silicon M1<br/>(8-core GPU)|-|-|-|45.0 MH/s| ~97s
 |Apple Silicon M1 Max<br/>(32-core GPU)|-|-|-|172.0 MH/s| ~25s
 
-## Tweaks
+### 修正參數
+以使用RTX 3070, 8G RAM, 46 compute units (precompiled = no)為例，輸入修正參數，可以有效的加強性能：
+
 ```bash
 .\profanity3 -I 64384 -w 64384 -i 512 -z e9507a57c01e9e18a929366813909bbc14b2d702a46c056df77465774d449e48b9f9c2279bb9a5996d2bd2c9f5c9470727f7f69c11f7eeee50efeaf97107a09c --leading-doubles 
-
-GPU0: NVIDIA GeForce RTX 3070, 8589279232 bytes available, 46 compute units (precompiled = no)
-tweak raise RTX3700 from 441 MH/s to 462 MH/s
-
-GPU0: NVIDIA GeForce RTX 3070 OC WC, Core-Clock: +170; Memory-Clock: +845
-tweak raise RTX3700 OC from 470 MH/s to 497 MH/s
-
-GPU0: NVIDIA GeForce RTX 3070 OC WC, Core-Clock: 1850+191; Memory-Clock: 6800+999
-tweak raise RTX3700 OC from 470 MH/s to 497 MH/s
 ```
 
-![Screenshot](/img/WS2022DC12OC501.png?raw=true "RTX3070OC")
+|型號|Δ核心頻率|Δ記憶體頻率|算力(百萬哈希/秒)
+|:-:|:-:|:-:|:-:|
+|RTX 3070|+0|+0|462 MH/s|
+|RTX 3070|+170|+845|497 MH/s|
+|RTX 3070|+191|+999|501 MH/s|
 
-### 50% probability to find a collision
+
+### 50%的碰撞機率
 ```
   i.e.: rate = 440 MHashes / sec = 440'000'000 Hashes / sec
   permutations = 16 ^ (prefixlength + postfixlength)
@@ -333,19 +335,22 @@ https://keisan.casio.com/calculator
 
 ```log(0.5)/log(1-1/16^12)/440000000/60/60/24 (days)```
 
-```
-GPU RTX 3070 -> Rate = 440 MH/s -> 50% probability:
- 7 chars -> 0.5 sec
- 8 chars -> 7 sec
- 9 chars -> 108 sec
-10 chars -> 28 min
-11 chars -> 7.7 h
-12 chars -> 5 days
-13 chars -> 82 days
-14 chars -> 3.6 years
-15 chars -> 56 years
-16 chars -> 921 years
-```
+以3070為例，算力為440MH/s，50%的碰撞機率
 
+|字元擬合數量|花費時間
+|:-:|:-:|
+|7碼|0.5秒|
+|8碼|7秒|
+|9碼|108秒|
+|10碼|28分鐘|
+|11碼|7.7小時|
+|12碼|5天|
+|13碼|82天|
+|14碼|3.6年|
+|15碼|56年|
+|16碼|921年|
+
+## debug Q&A
+### 1.python shell叫不出來
 
 
