@@ -13,7 +13,7 @@ Profanity 可以用來生成EVM虛榮地址/虛名地址
 - Profanity2是後來1inch修改Profanity 的種子碼生成方式，現在可正常使用
 - Profanity3是後來Rodrigo Madera 的加強版，多了可以逆向生成原本Profanity 生成公鑰回推私鑰的功能
   
-以上都是Linux friendly，Windows not friendly 的版本
+以上都是Linux user friendly，Windows user not friendly 的版本
 
 - profanity3WINx64 是來自xdeltax 的加強版，增加了對於windows 環境的支援
 
@@ -296,7 +296,8 @@ $ (echo 'ibase=16;obase=10' && (echo '(8825e602379969a2e97297601eccf47285f8dd4fe
 
 
 ## 效能
-### 算力比較
+
+**各顯卡算力**
 |型號|核心頻率|記憶體頻率|帶入的修正參數|算力(百萬哈希/秒)|擬合8位數所需時間
 |:-:|:-:|:-:|:-:|:-:|:-:|
 |RTX 3070 OC|1850+191|6800+999|-I 64384 -w 64384 -i 512|501.0 MH/s|
@@ -315,7 +316,7 @@ $ (echo 'ibase=16;obase=10' && (echo '(8825e602379969a2e97297601eccf47285f8dd4fe
 ```bash
 .\profanity3 -I 64384 -w 64384 -i 512 -z e9507a57c01e9e18a929366813909bbc14b2d702a46c056df77465774d449e48b9f9c2279bb9a5996d2bd2c9f5c9470727f7f69c11f7eeee50efeaf97107a09c --leading-doubles 
 ```
-
+**RTX3070超頻**
 |型號|Δ核心頻率|Δ記憶體頻率|算力(百萬哈希/秒)
 |:-:|:-:|:-:|:-:|
 |RTX 3070|+0|+0|462 MH/s|
@@ -323,21 +324,23 @@ $ (echo 'ibase=16;obase=10' && (echo '(8825e602379969a2e97297601eccf47285f8dd4fe
 |RTX 3070|+191|+999|501 MH/s|
 
 
-### 50%的碰撞機率
-```
-  i.e.: rate = 440 MHashes / sec = 440'000'000 Hashes / sec
-  permutations = 16 ^ (prefixlength + postfixlength)
-  prob50% = log(0.5) / log(1 - 1 / permutations)
-  timeTo50% = prob50% / rate
-```
+### 碰撞時間
 
-https://keisan.casio.com/calculator
+**碰撞到50%哈希值的時間計算公式：**
+$$\frac{\log{(0.5)}}{\log{(1-\frac{1}{{16}^n})}}\div H (H/sec)=t (sec)$$
+> n為擬合公鑰字元數，為介在1~40的正整數
+> 
+> H為GPU算力，單位為哈希值/秒
+> 
+> t為擬合時間，單位為秒
 
-```log(0.5)/log(1-1/16^12)/440000000/60/60/24 (days)```
+多數計算機會因為精度問題導致計算錯誤，請使用[線上高精度計算機](https://keisan.casio.jp/calculator)計算，進入網頁代入```log(0.5)/log(1-1/16^n)/440000000```，n為擬合字元數，單位為(秒)，可以調整網頁的「桁数」獲取更高精度的log值。
 
-以3070為例，算力為440MH/s，50%的碰撞機率
+**以3070為例，算力為440MH/s，並且50%的碰撞機率，擬合12碼：**
+$$\frac{\log{(0.5)}}{\log{(1-\frac{1}{{16}^{12}})}}\div\frac{440000000\ (H/sec)}{60\times60\times24\ (sec)}=5.13\ (days)$$
 
-|字元擬合數量|花費時間
+**440MH/s**
+|字元擬合數量|碰撞50%花費時間
 |:-:|:-:|
 |7碼|0.5秒|
 |8碼|7秒|
@@ -349,6 +352,10 @@ https://keisan.casio.com/calculator
 |14碼|3.6年|
 |15碼|56年|
 |16碼|921年|
+|17碼|14743年|
+|⋮|⋮|
+|40碼|$7.3\times{10}^{31}$年|
+
 
 ## debug Q&A
 ### 1.python shell叫不出來
