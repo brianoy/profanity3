@@ -106,7 +106,7 @@ Profanity 可以用來生成EVM虛榮地址/虛名地址
   
   
   
-- 請將位址改成你放profanity3WINx64的實際資料夾位置，輸入```cd /C/somewhere/in/your/computer/profanity3WINx64```，須注意路徑引用問題，不要使用```\```反斜線
+- 請將位址改成你放profanity3WINx64的實際資料夾位置，輸入```cd /C/somewhere/in/your/computer/profanity3WINx64```，須注意路徑引用問題，若使用```\```反斜線的路徑，請確保路徑被雙引號包住```""```
 - Windows系統請輸入```make -f Makefile.WIN```
 - 編譯完成
 - 輸入```./profanity3.exe```
@@ -384,3 +384,17 @@ profanity.cpp:16:10: fatal error: CL/cl.h: No such file or directory
 compilation terminated.
 ```
 > 請確認開啟的視窗是否為MSYS2 MINGW64，而非MSYS2 MSYS
+
+### 4.編譯失敗
+遇到：
+```bash
+Mode: matching
+Target: Address
+Devices:
+  GPU0: NVIDIA GeForce GTX 1650, 4294639616 bytes available, 14 compute units (precompiled = yes)
+  GPU1: gfx90c, 9765650432 bytes available, 7 compute units (precompiled = no)
+
+Initializing OpenCL...
+  Creating context...Segmentation fault
+```
+> 在原始的profanity和profanity2都有被提及此問題，疑似是多顆GPU的問題，目前無解
